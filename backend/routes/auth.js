@@ -1,10 +1,11 @@
+require('dotenv').config({ path: '../config.env' });
 const express = require("express");
 const User = require("../models/User");
 const router = express.Router();
 const { body, validationResult } = require("express-validator");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'Sumitisagoodboy';
+const JWT_SECRET = process.env.SECRET;
 const fetchuser = require('../middleware/fetchuser');
 
 
