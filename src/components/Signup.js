@@ -9,30 +9,34 @@ const Signup = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { name, email, password, cpassword } = credentials;
-        if (password === cpassword) {
-            const response = await fetch(`${API_URL}/auth/createuser`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, email, password })
-            });
-            const json = await response.json();
-            if (json.success) {
-                // Save the auth token and redirect
-                localStorage.setItem('token', json.authToken);
-                navigate("/");
-                props.showAlert("Account Created Successfully", "success");
+        try {
+            if (password === cpassword) {
+                const response = await fetch(`${API_URL}/auth/createuser`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const json = await response.json();
+                if (json.success) {
+                    // Save the auth token and redirect
+                    localStorage.setItem('token', json.authToken);
+                    navigate("/");
+                    props.showAlert("Account Created Successfully", "success");
 
+                }
+                else {
+                    props.showAlert("Invalid Credentials", "danger");
+                }
             }
             else {
                 props.showAlert("Invalid Credentials", "danger");
             }
+        } catch (error) {
+            console.log(error);
+            props.showAlert("Internal Server Error", "danger");
         }
-        else {
-            props.showAlert("Invalid Credentials", "danger");
-        }
-
     }
 
     const onChange = (e) => {
