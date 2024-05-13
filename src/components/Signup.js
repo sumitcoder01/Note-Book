@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../constant/contant';
+import { HypnosisLoader } from './loaders/HypnosisLoader';
 const Signup = (props) => {
+    const [loading, setLoading] = useState(false);
     const API_URL = BASE_URL;
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
     let navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
+        setLoading(true);
         const { name, email, password, cpassword } = credentials;
         try {
             if (password === cpassword) {
@@ -20,11 +24,8 @@ const Signup = (props) => {
                 });
                 const json = await response.json();
                 if (json.success) {
-                    // Save the auth token and redirect
-                    localStorage.setItem('token', json.authToken);
-                    navigate("/");
+                    navigate("/login");
                     props.showAlert("Account Created Successfully", "success");
-
                 }
                 else {
                     props.showAlert("Invalid Credentials", "danger");
@@ -37,6 +38,7 @@ const Signup = (props) => {
             console.log(error);
             props.showAlert("Internal Server Error", "danger");
         }
+        setLoading(false);
     }
 
     const onChange = (e) => {
@@ -64,7 +66,7 @@ const Signup = (props) => {
                     <label htmlFor="cpassword" className="form-label">Confirm Password</label>
                     <input type="password" className="form-control" id="cpassword" onChange={onChange} name="cpassword" required minLength={5} />
                 </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
+                <button type="submit" className="btn btn-primary">{loading ? <HypnosisLoader /> : "Submit"}</button>
             </form>
         </div>
     )

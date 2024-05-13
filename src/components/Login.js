@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../constant/contant';
+import { HypnosisLoader } from './loaders/HypnosisLoader';
 
 const Login = (props) => {
+    const [loading, setLoading] = useState(false);
     const API_URL = BASE_URL;
     const [credentials, setCredentials] = useState({ email: "", password: "" });
     let navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (loading) return;
+        setLoading(true);
         try {
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
@@ -23,7 +27,6 @@ const Login = (props) => {
                 localStorage.setItem('token', json.authToken);
                 props.showAlert("LoggedIn Successfully", "success")
                 navigate("/");
-
             }
             else {
                 props.showAlert("Invalid details", "danger");
@@ -32,6 +35,7 @@ const Login = (props) => {
             console.log(error);
             props.showAlert("Internal Server Error", "danger");
         }
+        setLoading(false);
     }
 
     const onChange = (e) => {
@@ -51,7 +55,7 @@ const Login = (props) => {
                     <input type="password" className="form-control" value={credentials.password} onChange={onChange} name="password" id="password" />
                 </div>
 
-                <button type="submit" className="btn btn-primary">Submit</button>
+                <button type="submit" className="btn btn-primary">{loading ? <HypnosisLoader /> : "Submit"}</button>
             </form>
         </div>
     )

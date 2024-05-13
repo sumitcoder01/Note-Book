@@ -1,7 +1,9 @@
 import React, {useContext, useState} from 'react'
 import noteContext from "../context/notes/noteContext";
+import { HypnosisLoader } from './loaders/HypnosisLoader';
 
 const AddNote = (props) => {
+    const [loading,setLoading]=useState(false);
     const context = useContext(noteContext);
     const {addNote} = context;
 
@@ -9,9 +11,12 @@ const AddNote = (props) => {
 
     const handleClick = (e)=>{
         e.preventDefault();
+        if(loading) return;
+        setLoading(true);
         addNote(note.title, note.description, note.tag);
         setNote({title: "", description: "", tag: ""})
         props.showAlert("Added Successfully","success");
+        setLoading(false);
     }
 
     const onChange = (e)=>{
@@ -34,7 +39,7 @@ const AddNote = (props) => {
                     <input type="text" className="form-control" id="tag" name="tag" value={note.tag} onChange={onChange} minLength={5} required />
                 </div>
                
-                <button disabled={note.title.length<5 || note.description.length<5} type="submit" className="btn btn-primary" onClick={handleClick}>Add Note</button>
+                <button disabled={note.title.length<5 || note.description.length<5} type="submit" className="btn btn-primary" onClick={handleClick}>{loading ? <HypnosisLoader /> : "Add Note"}</button>
             </form>
         </div>
     )
